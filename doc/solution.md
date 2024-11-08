@@ -20,9 +20,6 @@ O código foi adaptado para usar OpenMP, permitindo o processamento paralelo em 
 - **Carregamento e filtração de registros**:
   - Utilização de `#pragma omp parallel for` para filtrar os registros de forma paralela.
 
-- **Verificação de mínimos em comparações**:
-  - Implementação de `#pragma omp parallel for` com `schedule(dynamic, 128)` para balancear a carga de trabalho.
-
 - **Combinação de registros e cálculo de produtos**:
   - Uso de `#pragma omp parallel for collapse(2)` para melhorar o desempenho na combinação de registros.
 
@@ -37,15 +34,11 @@ O código foi adaptado para usar OpenMP, permitindo o processamento paralelo em 
 - **Filtragem antecipada de registros**:
   - Registros de `A` com valores menores que `THRESHOLD_CA_MIN` e registros de `B` com valores maiores que `THRESHOLD_CB_MAX` são eliminados antes das etapas de verificação mais complexas. Isso reduz a quantidade de dados processados nas etapas posteriores e melhora a eficiência.
 
-### 2.4. Verificação Otimizada 2 a 2
-- **Checagem 2 a 2 aprimorada**:
-  - verificação para encontrar registros elegíveis à mínimos quando comparados 2 a 2 com otimização para parar assim que um registro se verificasse com e essa qualidade. Além disso, a lógica foi estruturada para evitar a dupla verificação do mesmo par, eliminando comparações redundantes e economizando ciclos de CPU.
-
-### 2.5. Uso de Estruturas de Dados Paralelas
+### 2.4. Uso de Estruturas de Dados Paralelas
 - **Tabelas hash paralelas**:
   - Cada thread cria uma tabela hash local para armazenar os registros durante a execução paralela. As tabelas são mescladas em uma etapa crítica, reduzindo a contenção de recursos.
 
-### 2.6. Vetorização
+### 2.5. Vetorização
 - **Adicionada diretriz de vetorização**:
   - Uso de `#pragma omp simd` em loops relevantes para sugerir ao compilador a vetorização das operações, aumentando a eficiência.
 
