@@ -47,11 +47,11 @@ project_root/
 ### Installation
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/project-name.git
+   git clone https://github.com/lucasll37/exame_csc-64.git
    ```
 2. Navigate to the project directory:
    ```bash
-   cd project-name
+   cd exame_csc-64
    ```
 
 ### Usage
@@ -67,7 +67,7 @@ make par
 
 To compiler and run the sequential program:
 ```bash
-make par
+make seq
 ```
 Obs.: To perform fact-time processing, simulate for NUM_RECORDS values ​​up to 50.
 
