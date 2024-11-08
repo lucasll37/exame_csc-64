@@ -34,6 +34,9 @@ O código foi adaptado para usar OpenMP, permitindo o processamento paralelo em 
 - **Filtragem antecipada de registros**:
   - Registros de `A` com valores menores que `THRESHOLD_CA_MIN` e registros de `B` com valores maiores que `THRESHOLD_CB_MAX` são eliminados antes das etapas de verificação mais complexas. Isso reduz a quantidade de dados processados nas etapas posteriores e melhora a eficiência.
 
+- **Remoção do maior e menor registro**:
+  - Após a filtragem inicial, foi implementada a remoção do maior valor restante de `A` e do menor valor restante de `B`, garantindo que apenas os registros necessários sejam processados nas etapas subsequentes. Note que esses valores jamais seriam selecionados para combinação, então sua remoção não afeta o resultado final.
+
 ### 2.4. Uso de Estruturas de Dados Paralelas
 - **Tabelas hash paralelas**:
   - Cada thread cria uma tabela hash local para armazenar os registros durante a execução paralela. As tabelas são mescladas em uma etapa crítica, reduzindo a contenção de recursos.
@@ -54,4 +57,7 @@ O código foi adaptado para usar OpenMP, permitindo o processamento paralelo em 
   - A redução da quantidade de registros processados e a otimização na checagem 2 a 2 contribuíram para ganhos adicionais de desempenho.
 
 ## 4. Conclusão
-As melhorias aplicadas, incluindo paralelismo com OpenMP, otimizações de memória, filtragem antecipada de registros e uso de tabelas hash paralelas, resultaram em um código mais eficiente e com melhor desempenho em grandes volumes de dados. Essas modificações garantiram o uso mais eficiente dos recursos de hardware, reduzindo significativamente o tempo de execução.
+As melhorias aplicadas, incluindo paralelismo com OpenMP, otimizações de memória, filtragem antecipada de registros, remoção dos maiores e menores valores restantes, e uso de tabelas hash paralelas, resultaram em um código mais eficiente e com melhor desempenho em grandes volumes de dados. Essas modificações garantiram o uso mais eficiente dos recursos de hardware, reduzindo significativamente o tempo de execução.
+
+Para mais detalhes, consultar `./doc/solution.md`.
+

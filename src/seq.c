@@ -3,7 +3,7 @@
 #include <string.h>
 #include <time.h>
 
-#define NUM_RECORDS 30000
+#define NUM_RECORDS 100
 #define THRESHOLD_CA_MIN 0.25f
 #define THRESHOLD_CB_MAX 0.75f
 
@@ -77,7 +77,7 @@ int main() {
   load_ids("./db/ids.txt", idsA);
   load_ids("./db/ids.txt", idsB);
 
-  FILE *output = fopen("./output/output_seq.csv", "w");
+  FILE *output = fopen("./output/seq.csv", "w");
   if (!output) {
     fprintf(stderr, "Erro ao abrir o arquivo de saída.\n");
     free(recordsA);
@@ -130,7 +130,9 @@ int main() {
                 continue;
               }
 
-              fprintf(output, "%s,%s,%s,%f,%f,%f\n", idsA[Ca1], idsB[Cb1],
+              // fprintf(output, "%s,%s,%s,%f,%f,%f\n", idsA[Ca1], idsB[Cb1],
+              //         combined_id, minCa, maxCb, product);
+              fprintf(output, "%s,%s,%s,%f,%f,%f\n", id_minCa, id_maxCb,
                       combined_id, minCa, maxCb, product);
             }
           }
@@ -144,7 +146,10 @@ int main() {
   // Ordena os registros com base no valor da coluna f
   // NOTE: This is a simplified approach; for large datasets, external sorting
   // would be more appropriate
-  system("sort -t, -k6 -n ./output/output_seq.csv -o ./output/sorted_output_seq.csv");
+  // system("sort -t, -k6 -n ./output/output_seq.csv -o ./output/sorted_output_seq.csv");
+  // system("(head -n 1 ./output/seq.csv && tail -n +2 ./output/seq.csv | sort -t, -k6 -n) > ./output/sorted_seq.csv");
+  system("(head -n 1 ./output/seq.csv && tail -n +2 ./output/seq.csv | sort -t, -k1,1) > ./output/sorted_seq.csv");
+  system("awk '!seen[$0]++' ./output/sorted_seq.csv > ./output/unique_sorted_seq.csv");
   // Descrição do comando:
   // sort: O comando para ordenar.
   // -t,: Define a vírgula (,) como delimitador de campo.
@@ -159,7 +164,7 @@ int main() {
   free(idsA);
   free(idsB);
 
-  printf("Processamento completo. Resultados salvos em sorted_output_seq.csv\n");
+  printf("Processamento completo. Resultados salvos em sorted_seq.csv\n");
   end_time = clock(); // Fim da medição de tempo
   double time_spent = (double)(end_time - start_time) / CLOCKS_PER_SEC;
   printf("Processing time: %.2f seconds\n", time_spent);

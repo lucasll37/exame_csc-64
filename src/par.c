@@ -4,12 +4,13 @@
 #include <omp.h>
 #include "uthash.h" // Biblioteca para a implementação de hashtable
 
-#define NUM_RECORDS 30000
+#define NUM_RECORDS 100
 #define THRESHOLD_CA_MIN 0.25f
 #define THRESHOLD_CB_MAX 0.75f
 
 typedef struct {
     char id[6];
+    int position;
     float value;
     UT_hash_handle hh; // Handle para a tabela hash
 } HashRecord;
@@ -87,6 +88,33 @@ int main() {
         }
     }
 
+
+    // Encontra e remove o maior valor em A após o filtro
+    float maxA = -1.0f;
+    int maxAIndex = -1;
+    for (int i = 0; i < NUM_RECORDS; ++i) {
+        if (recordsA[i].value != -1.0f && recordsA[i].value > maxA) {
+            maxA = recordsA[i].value;
+            maxAIndex = i;
+        }
+    }
+    if (maxAIndex != -1) {
+        recordsA[maxAIndex].value = -1.0f; // Marca o maior valor como removido
+    }
+
+    // Encontra e remove o menor valor em B após o filtro
+    float minB = 2.0f; // Valor inicial alto para garantir a busca do mínimo
+    int minBIndex = -1;
+    for (int i = 0; i < NUM_RECORDS; ++i) {
+        if (recordsB[i].value != -1.0f && recordsB[i].value < minB) {
+            minB = recordsB[i].value;
+            minBIndex = i;
+        }
+    }
+    if (minBIndex != -1) {
+        recordsB[minBIndex].value = -1.0f; // Marca o menor valor como removido
+    }
+
     // Cria uma tabela hash para armazenar os IDs e valores
     HashRecord *hash_table = NULL;
 
@@ -101,6 +129,7 @@ int main() {
                 HashRecord *entry = (HashRecord *)malloc(sizeof(HashRecord));
                 strncpy(entry->id, idsA[i], 5);
                 entry->id[5] = '\0';
+                entry->position = i;
                 entry->value = recordsA[i].value;
                 HASH_ADD_STR(local_table, id, entry);
             }
@@ -141,7 +170,7 @@ int main() {
     }
 
     // Etapa final: combinação e cálculo do produto
-    FILE *output = fopen("./output/output_par.csv", "w");
+    FILE *output = fopen("./output/par.csv", "w");
 
     if (!output) {
         fprintf(stderr, "Erro ao criar o arquivo de saída.\n");
@@ -157,7 +186,7 @@ int main() {
     #pragma omp parallel for collapse(2) schedule(dynamic, 64)
     for (int i = 0; i < NUM_RECORDS; ++i) {
         for (int j = 0; j < NUM_RECORDS; ++j) {
-            if (i != j && recordsA[i].value != -1.0f && recordsB[j].value != -1.0f) {
+            if (recordsA[i].value != -1.0f && recordsB[j].value != -1.0f) {
                 char combined_id[6];
                 strcpy(combined_id, combine_ids(idsA[i], idsB[j]));
 
@@ -169,7 +198,7 @@ int main() {
                 {
                     HASH_FIND_STR(hash_table, combined_id, found);
                     if (found) {
-                        float f = product * found->value;
+                        float f = product * recordsA[found->position].value * recordsB[found->position].value;
                         fprintf(output, "%s,%s,%s,%f,%f,%f\n", idsA[i], idsB[j], combined_id, recordsA[i].value, recordsB[j].value, f);
                     }
                 }
@@ -178,7 +207,9 @@ int main() {
     }
 
     fclose(output);
-    system("sort -t, -k6 -n ./output/output_par.csv -o ./output/sorted_output_par.csv");
+    // system("sort -t, -k6 -n ./output/output_par.csv -o ./output/sorted_output_par.csv");
+    // system("(head -n 1 ./output/par.csv && tail -n +2 ./output/par.csv | sort -t, -k6 -n) > ./output/sorted_par.csv");
+    system("(head -n 1 ./output/par.csv && tail -n +2 ./output/par.csv | sort -t, -k1,1) > ./output/sorted_par.csv");
 
     // Libera a memória
     HashRecord *current_entry, *tmp;
@@ -191,7 +222,7 @@ int main() {
     free(idsA);
     free(idsB);
 
-    printf("Processamento completo. Resultados salvos em sorted_output_par.csv\n");
+    printf("Processamento completo. Resultados salvos em sorted_par.csv\n");
 
     end_time = omp_get_wtime();
     printf("Tempo de processamento: %.2f segundos\n", end_time - start_time);
