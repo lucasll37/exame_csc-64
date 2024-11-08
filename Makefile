@@ -11,7 +11,6 @@ TARGET_DB = $(BUILDDIR)/db
 
 all: folder_build folder_output db comp_seq comp_par
 	@echo "All was compiled"
-	$(TARGET_PARALLEL)
 
 folder_build:
 	@mkdir -p $(BUILDDIR)

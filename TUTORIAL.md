@@ -17,9 +17,6 @@ Ensure the following tools are installed on your system:
    ```bash
    gcc -fopenmp --version
    ```
-3. **Install uthash**:
-   - Download uthash from [uthash GitHub](https://github.com/troydhanson/uthash) and place the header file `uthash.h` in `./libs/uthash/`.
-
 ### Compiling the Project
 The `Makefile` provided automates the build process and organizes the output. Here’s what each target does:
 
@@ -36,20 +33,21 @@ make all
 This command will create the `parallel`, `seq`, and `db` executables in the `build` directory.
 
 ### Running the Program
+To generate the database files:
+```bash
+make db
+```
+
 To run the parallelized program:
 ```bash
-./build/parallel
+make par
 ```
 
 To run the sequential program:
 ```bash
-./build/seq
+make seq
 ```
-
-To generate the database files:
-```bash
-./build/db
-```
+Obs.: To perform fact-time processing, simulate for NUM_RECORDS values ​​up to 50.
 
 ### Understanding the Output
 The program processes the input data and creates a CSV file `output_par.csv` with the following columns:
@@ -59,25 +57,3 @@ The program processes the input data and creates a CSV file `output_par.csv` wit
 - `a_m`: Value from record A
 - `b_M`: Value from record B
 - `f`: Final product
-
-### Troubleshooting
-- **Error opening file**: Ensure the input files `A.txt`, `B.txt`, and `ids.txt` are present in the `db` directory.
-- **Memory allocation error**: Verify sufficient system memory is available.
-- **Compilation errors**: Ensure that `uthash.h` is correctly placed in `./libs/uthash/` and included via `INCLUDES` in the `Makefile`.
-
-### Customizing the Build
-To modify the compiler or flags, edit the `Makefile`:
-```makefile
-CC = gcc
-CFLAGS = -Wall -fopenmp
-INCLUDES = -I./libs/uthash/include
-```
-This ensures compatibility and optimizes performance with OpenMP and hash table functionalities.
-
-### Additional Notes
-- The runtime of the program is displayed upon completion.
-- The final sorted output is available as `sorted_output_par.csv` in the `output` directory.
-
-### Contact
-For any issues, contact [your_email@domain.com].
-
