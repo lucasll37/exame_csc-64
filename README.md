@@ -48,6 +48,7 @@ project_root/
 
 ### Installation
 1. Clone the repository:
+
    ```bash
    git clone https://github.com/lucasll37/exame_csc-64.git
    ```
@@ -57,24 +58,49 @@ project_root/
    ```
 
 ### Usage
-To generate synthetic data:
-```bash
-make db
-```
+1. To generate synthetic data:
+   ```bash
+   make db
+   ```
 
-To compiler and run the parallel program:
-```bash
-make par
-```
+2. To compiler and run the parallel program:
+   ```bash
+   make par
+   ```
 
-To compiler and run the sequential program:
-```bash
-make seq
-```
-Obs.: To perform fact-time processing, simulate for NUM_RECORDS values ​​up to 50.
+3. To compiler and run the sequential program:
+   ```bash
+   make seq
+   ```
+Note: The application is configured to process NUM_RECORDS records. For real-time processing with large datasets (e.g., 30,000 records), ensure your system has sufficient memory and processing power. For testing or demonstration purposes, you can reduce NUM_RECORDS in the source code (e.g., to 50~100) to observe the application's behavior without extensive resource usage.
 
 ### Output
-The processed output is saved in the `output` directory as `output_*.csv` and `sorted_output_*.csv` for the ordered version.
+The processed output files are saved in the `output/` directory:
+`par.csv` and `sorted_par.csv`: Results from the parallel program.
+`seq.csv` and `sorted_seq.csv`: Results from the sequential program.
+`unique_sorted_seq.csv`: Deduplicated and sorted output.
+
+### Documentation
+#### Tutorial
+For a detailed, step-by-step guide on how to install the necessary tools, compile, and run the application, please refer to `TUTORIAL.md`. This tutorial includes:
+
+- Installation Instructions: How to install GCC, OpenMP, and any other dependencies.
+
+- Compilation Steps: Commands and explanations for compiling the database generator and both versions of the program.
+
+- Execution Guidance: How to run the executables, adjust parameters, and interpret command-line output.
+- Troubleshooting Tips: Common issues and how to resolve them.
+
+#### Solution Details
+In-depth documentation about the solution, including the algorithms used, optimizations implemented can be found in `doc/solution.md`. This document covers:
+
+- Problem Overview: Detailed description of the problem and requirements.
+
+- Algorithm Explanation: Insights into the data structures and algorithms employed.
+
+- Optimization Strategies: Discussion of parallelization techniques, memory optimizations, and other enhancements.
+
+- Challenges and Solutions: Problems encountered during development and how they were addressed.
 
 ### Cleaning Up
 To clean up the build and output files:

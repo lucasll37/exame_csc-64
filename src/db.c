@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-#define NUM_RECORDS 100
+#define NUM_RECORDS 30000
 #define ID_LENGTH 5
 
 // Função para gerar uma string alfabética maiúscula aleatória de tamanho fixo
