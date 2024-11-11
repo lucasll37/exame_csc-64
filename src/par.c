@@ -265,7 +265,7 @@ int main() {
     free(idsA);
     free(idsB);
 
-    printf("Processamento completo. Resultados salvos em ./output/par.csv\n");
+    printf("Processamento completo (N = %d). Resultados salvos em ./output/par.csv\n", NUM_RECORDS);
 
     end_time = omp_get_wtime();
     printf("Tempo de processamento: %.2f segundos\n", end_time - start_time);

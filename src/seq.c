@@ -162,7 +162,7 @@ int main() {
   free(idsA);
   free(idsB);
 
-  printf("Processamento completo. Resultados salvos em ./output/seq.csv\n");
+  printf("Processamento completo (N = %d). Resultados salvos em ./output/seq.csv\n", NUM_RECORDS);
   end_time = clock(); // Fim da medição de tempo
   double time_spent = (double)(end_time - start_time) / CLOCKS_PER_SEC;
   printf("Processing time: %.2f seconds\n", time_spent);

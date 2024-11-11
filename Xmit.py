@@ -10,7 +10,7 @@ if len(sys.argv) < 2:
 
 nThreads=sys.argv[1]
 queue="sequana_cpu_dev"
-execTime="00:01:00"
+execTime="00:05:00"
 
 pwd = os.getcwd()
 execName = pwd + "/build/par"
