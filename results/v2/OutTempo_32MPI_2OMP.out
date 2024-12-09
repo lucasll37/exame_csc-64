@@ -1,0 +1,3 @@
+srun: warning: can't honor --ntasks-per-node set to 24 which doesn't match the requested tasks 32 with the number of requested nodes 2. Ignoring --ntasks-per-node.
+Processamento completo (N = 30000). Resultados salvos em ./output/unique_sorted_par.csv
+Tempo de processamento: 21.42 segundos

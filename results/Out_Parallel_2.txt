@@ -1,5 +1,0 @@
-
-
-Número de núcleos disponíveis: 2
-Processamento completo (N = 30000). Resultados salvos em ./output/par.csv
-Tempo de processamento: 58.48 segundos

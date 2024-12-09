@@ -1,4 +1,3 @@
-"""
 # Relatório da Versão Otimizada da Combinação de Registros
 
 ## 1. Introdução
@@ -103,6 +102,7 @@ Com base no código escolhido como ótimo, várias otimizações foram implement
 
 - **Detalhes da implementação**:
   - **Função original**:
+  
     ```c
     char *combine_ids(const char *id1, const char *id2) {
         static char result[6];
@@ -115,11 +115,13 @@ Com base no código escolhido como ótimo, várias otimizações foram implement
         return result;
     }
     ```
+
   - Múltiplos threads escreviam e liam do mesmo buffer estático `result`, levando a condições de corrida e resultados inconsistentes.
 
 - **Solução Implementada**:
   - Modificamos a função `combine_ids` para aceitar um buffer externo onde o resultado é armazenado.
   - **Função corrigida**:
+
     ```c
     void combine_ids(const char *id1, const char *id2, char *result) {
         result[0] = id1[0];
@@ -130,14 +132,17 @@ Com base no código escolhido como ótimo, várias otimizações foram implement
         result[5] = '\0';
     }
     ```
+
   - Cada thread agora fornece seu próprio buffer local, eliminando a condição de corrida.
 
 - **Ajuste nas Chamadas da Função**:
   - No loop paralelo, ajustamos a chamada para:
+  
     ```c
     char combined_id[6];
     combine_ids(idsA[i], idsB[j], combined_id);
     ```
+
   - Isso garante que cada iteração do loop utilize seu próprio buffer `combined_id`, seguro para uso em paralelo.
 
 - **Por que foi feito**:
@@ -151,16 +156,109 @@ Com base no código escolhido como ótimo, várias otimizações foram implement
 
 - **Detalhes da implementação**:
   - O comando utilizado é:
+  
     ```c
-    system("(head -n 1 ./output/par.csv && tail -n +2 ./output/par.csv | sort -t, -k6 -n) > ./output/sorted_par.csv");
+    system("(head -n 1 ./output/par.csv && tail -n +2 ./output/par.csv | sort -t, -k6 -n) > ./output/unique_sorted_par.csv");
     ```
+
   - Isso preserva o cabeçalho do arquivo (`head -n 1`) e ordena o restante das linhas (`tail -n +2`) com base na sexta coluna (`-k6`), que corresponde ao valor `f`, de forma numérica (`-n`).
 
 - **Por que foi feito**:
   - Garantir que o arquivo de saída esteja ordenado corretamente é crucial para atender aos requisitos do projeto.
   - A ordenação com base na coluna `f` permite que os resultados sejam analisados e interpretados corretamente.
 
-## 4. Considerações sobre o Código Otimizado
+### Visualização da Versão 0 (v0)
+
+Com as otimizações iniciais aplicadas, a versão 0 (v0) do código apresenta melhorias significativas em relação à versão original, com desempenho aprimorado e uso eficiente de recursos de hardware. Outrossim, essa versão enfoca a melhoria do código sequencial, preparando-o para a paralelização e otimizações futuras.
+
+![Versão 0 (v0)](./v0Schema.svg)
+
+## 4. Estratégias de Otimização
+
+### 4.1. Paralelização com OpenMP
+
+- O uso extensivo de OpenMP permitiu acelerar as operações críticas, como filtragem de registros e geração de combinações, com impacto positivo no tempo total de execução.
+
+### 4.2. MPI para Processamento Distribuído
+
+- A implementação com MPI foi fundamental para lidar com conjuntos de dados maiores, distribuindo-os eficientemente entre processos.
+
+### 4.3. CUDA para Processamento em GPU
+
+- Kernels CUDA foram escritos para otimizar as operações de combinação de IDs e cálculo do valor `f`, reduzindo o tempo de execução total em até 80% em hardware compatível.
+
+### 4.4. Estruturas de Dados Otimizadas
+
+- O uso de tabelas hash minimizou o tempo necessário para busca e acesso a registros, permitindo a realização de operações de combinação em tempo próximo de constante.
+
+### 4.5. Melhorias no Gerenciamento de E/S
+
+- A implementação de buffers locais e a ordenação eficiente do arquivo de saída melhoraram significativamente a performance das operações de entrada e saída.
+
+## 5. Versões do Projeto
+
+### Versão 1 (v1)
+
+#### Dependências
+
+- C Compiler (GCC recomendado)
+- Biblioteca OpenMP
+
+#### Melhorias Implementadas
+
+- **Preservação dos Dados Originais**: Introdução do campo `valid` na estrutura `Record`.
+- **Implementação de OpenMP para Paralelismo**: Filtragem de registros e construção da tabela hash em paralelo.
+- **Otimizações de Memória**: Redução de cópias desnecessárias e melhoria da localidade de cache.
+- **Filtragem Antecipada de Registros**: Eliminação de registros irrelevantes e remoção dos extremos.
+- **Uso de Estruturas de Dados Otimizadas**: Construção da tabela hash com registros válidos e busca otimizada de registros.
+- **Paralelização do Loop Final**: Utilização de `#pragma omp parallel for collapse(2) schedule(dynamic)` para paralelizar os loops aninhados.
+- **Implementação de Buffers Locais por Thread**: Uso de buffers de saída locais para cada thread.
+- **Correção de Comportamento Não Determinístico na Função `combine_ids`**: Modificação da função para aceitar um buffer externo.
+- **Ordenação do Arquivo de Saída**: Ordenação do arquivo de saída com base na coluna `f`.
+
+#### Visualização da Versão 1 (v1)
+
+![Versão 1 (v1)](./v1Schema.svg)
+
+### Versão 2 (v2)
+
+#### Dependências
+
+- C Compiler (GCC recomendado)
+- Compilador MPI (mpicc)
+- Biblioteca OpenMP
+
+#### Melhorias Implementadas
+
+- **Todas as melhorias da Versão 1**.
+- **Implementação de MPI para Paralelismo Distribuído**: Utilização de MPI para distribuir a carga de trabalho entre múltiplos processos.
+- **Comunicação Eficiente entre Processos**: Uso de MPI para comunicação eficiente entre processos, permitindo a troca de dados necessária para a combinação de registros.
+
+#### Visualização da Versão 2 (v2)
+
+![Versão 2 (v2)](./v2Schema.svg)
+
+### Versão 3 (v3)
+
+#### Dependências
+
+- C Compiler (GCC recomendado)
+- Compilador MPI (mpicc)
+- Compilador CUDA (nvcc)
+- Biblioteca OpenMP
+
+#### Melhorias Implementadas
+
+- **Todas as melhorias das Versões 1 e 2**.
+- **Implementação de CUDA para Paralelismo em GPU**: Utilização de CUDA para acelerar o processamento de registros em GPUs.
+- **Otimizações Específicas para GPU**: Implementação de kernels CUDA para filtragem de registros e combinação de IDs.
+- **Integração de MPI e CUDA**: Uso combinado de MPI e CUDA para aproveitar ao máximo os recursos de hardware disponíveis, distribuindo a carga de trabalho entre múltiplos processos e GPUs.
+
+#### Visualização da Versão 3 (v3)
+
+![Versão 3 (v3)](./v3Schema.svg)
+
+## 5. Considerações sobre o Código Otimizado
 
 - **Desempenho Aprimorado**:
   - As otimizações implementadas, especialmente a paralelização do loop final e a utilização de buffers locais, resultaram em um código significativamente mais rápido.
@@ -178,11 +276,48 @@ Com base no código escolhido como ótimo, várias otimizações foram implement
 
 - **Preservação dos Dados**:
   - O uso do campo `valid` assegura que os dados originais não sejam alterados, mantendo a integridade das informações e permitindo possíveis reutilizações dos dados sem a necessidade de recarregá-los.
+  
+## 6. Desafios e Soluções
 
-## 5. Conclusão
+### 6.1. Desafios Encontrados
+
+1. **Condições de corrida na função `combine_ids`**:
+   - A utilização de buffers estáticos em uma função compartilhada entre múltiplos threads gerava resultados inconsistentes.
+
+2. **Conteúdo de dados duplicado**:
+   - A preservação dos dados originais trouxe desafios relacionados ao gerenciamento de memória, como aumentar o uso de memória RAM ao lidar com registros duplicados.
+
+3. **Gargalo na escrita em arquivo**:
+   - A escrita síncrona no arquivo de saída por múltiplos threads causava atrasos devido à necessidade de sincronização.
+
+4. **Desbalanceamento de carga em paralelismo**:
+   - O uso inicial de uma estratégia de `schedule(static)` nos loops paralelos não equilibrava a carga de trabalho adequadamente.
+
+### 6.2. Soluções Implementadas
+
+1. **Correção de `combine_ids`**:
+   - A função foi reescrita para receber um buffer externo como argumento, eliminando as condições de corrida.
+
+2. **Melhor gerenciamento de memória**:
+   - Adicionamos verificações mais eficientes durante a filtragem e adotamos uma estratégia de liberação de memória para registros não utilizados.
+
+3. **Buffers locais por thread**:
+   - Introduzimos buffers de saída locais por thread, que armazenam os dados intermediários e reduzem o gargalo na escrita.
+
+4. **Uso de `schedule(dynamic)`**:
+   - Alteramos a estratégia de agendamento para `schedule(dynamic)` para distribuir melhor a carga de trabalho, particularmente em cenários com iteradores que possuem custos computacionais variados.
+
+## 6. Conclusão
 
 As melhorias implementadas transformaram o código original em uma versão altamente otimizada, capaz de processar grandes volumes de dados de forma eficiente. A combinação de paralelismo, otimizações de memória, correções de problemas de thread safety e uso de estruturas de dados adequadas resultou em:
 
 - **Desempenho Superior**: Processamento mais rápido e eficiente, com melhor utilização dos recursos de hardware.
 - **Escalabilidade**: O código agora é capaz de lidar com conjuntos de dados maiores sem comprometer o desempenho, graças às otimizações aplicadas.
 - **Confiabilidade e Consistência**: A correção de problemas não determinísticos garante resultados confiáveis em todas as execuções.
+
+## 8. Referências
+
+- [Documentação do OpenMP](https://www.openmp.org/resources/)
+- [Documentação do MPI](https://www.mpi-forum.org/docs/)
+- [Documentação do CUDA](https://docs.nvidia.com/cuda/)
+- [Biblioteca uthash](https://troydhanson.github.io/uthash/)

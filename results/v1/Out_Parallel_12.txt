@@ -1,0 +1,5 @@
+
+
+Número de núcleos disponíveis: 12
+Processamento completo (N = 30000). Resultados salvos em ./output/unique_sorted_par.csv
+Tempo de processamento: 50.50 segundos
