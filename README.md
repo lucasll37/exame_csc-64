@@ -37,7 +37,6 @@ project_root/
 |   |-- Makefile              # Build instructions for the version
 |-- .gitignore                # Git ignore file
 |-- LICENSE                   # License file
-|-- Makefile                  # Build instructions
 |-- README.md                 # Project overview and instructions
 ```
 
