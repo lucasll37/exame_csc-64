@@ -185,7 +185,7 @@ Com as otimizações iniciais aplicadas, a versão 0 (v0) do código apresenta m
 
 ### 4.3. CUDA para Processamento em GPU
 
-- Kernels CUDA foram escritos para otimizar as operações de combinação de IDs e cálculo do valor `f`, reduzindo o tempo de execução total em até 80% em hardware compatível.
+- Kernels CUDA foram escritos para otimizar as operações de combinação de IDs e cálculo do valor `f`, reduzindo o tempo de execução total em hardware compatível.
 
 ### 4.4. Estruturas de Dados Otimizadas
 
