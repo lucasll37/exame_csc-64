@@ -9,7 +9,7 @@
 #include "kernels.h"
 #include "uthash.h"
 
-#define NUM_RECORDS 300000
+#define NUM_RECORDS 30000
 #define THRESHOLD_CA_MIN 0.25f
 #define THRESHOLD_CB_MAX 0.75f
 

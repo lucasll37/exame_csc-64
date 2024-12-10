@@ -171,7 +171,7 @@ Com base no código escolhido como ótimo, várias otimizações foram implement
 
 Com as otimizações iniciais aplicadas, a versão 0 (v0) do código apresenta melhorias significativas em relação à versão original, com desempenho aprimorado e uso eficiente de recursos de hardware. Outrossim, essa versão enfoca a melhoria do código sequencial, preparando-o para a paralelização e otimizações futuras.
 
-![Versão 0 (v0)](./v0Schema.svg)
+![Versão 0 (v0)](./images/v0Schema.svg)
 
 ## 4. Estratégias de Otimização
 
@@ -218,7 +218,19 @@ Com as otimizações iniciais aplicadas, a versão 0 (v0) do código apresenta m
 
 #### Visualização da Versão 1 (v1)
 
-![Versão 1 (v1)](./v1Schema.svg)
+![Versão 1 (v1)](./images/v1Schema.svg)
+
+#### Prós e Contras da Versão 1 (v1)
+
+- **Prós**:
+  - Paralelização simples e eficaz com OpenMP.
+  - Melhorias significativas no desempenho e eficiência do código sequencial.
+  - Preservação dos dados originais e uso eficiente de memória.
+  - Implementação de estruturas de dados otimizadas (*hash*) para busca eficiente.
+
+- **Contras**:
+  - Limitado em termos de escalabilidade para grandes conjuntos de dados.
+  - Não aproveita totalmente os recursos de *hardware* disponíveis.
 
 ### Versão 2 (v2)
 
@@ -236,7 +248,19 @@ Com as otimizações iniciais aplicadas, a versão 0 (v0) do código apresenta m
 
 #### Visualização da Versão 2 (v2)
 
-![Versão 2 (v2)](./v2Schema.svg)
+![Versão 2 (v2)](./images/v2Schema.svg)
+
+#### Prós e Contras da Versão 2 (v2)
+
+- **Prós**:
+  - Escalabilidade aprimorada com a implementação de MPI.
+  - Distribuição eficiente da carga de trabalho entre múltiplos processos.
+  - Comunicação eficiente entre processos para troca de dados.
+
+- **Contras**:
+  - Complexidade adicional devido à necessidade de gerenciar processos e comunicação.
+  - Requer mais recursos de *hardware* para executar múltiplos processos.
+  - Pode ser mais difícil de depurar e otimizar devido à natureza distribuída.
 
 ### Versão 3 (v3)
 
@@ -256,7 +280,19 @@ Com as otimizações iniciais aplicadas, a versão 0 (v0) do código apresenta m
 
 #### Visualização da Versão 3 (v3)
 
-![Versão 3 (v3)](./v3Schema.svg)
+![Versão 3 (v3)](./images/v3Schema.svg)
+
+#### Prós e Contras da Versão 3 (v3)
+
+- **Prós**:
+  - Aceleração significativa do processamento de registros com a utilização de GPUs.
+  - Melhor aproveitamento dos recursos de *hardware* disponíveis.
+  - Combinação eficiente de MPI e CUDA para distribuição de carga de trabalho e processamento em GPUs.
+
+- **Contras**:
+  - Complexidade adicional devido à integração de MPI e CUDA.
+  - Requer *hardware* compatível com CUDA para obter benefícios significativos.
+  - Para conjuntos de dados pequenos, o *overhead* de comunicação com a GPU pode superar os ganhos de desempenho.
 
 ## 5. Considerações sobre o Código Otimizado
 
@@ -276,10 +312,42 @@ Com as otimizações iniciais aplicadas, a versão 0 (v0) do código apresenta m
 
 - **Preservação dos Dados**:
   - O uso do campo `valid` assegura que os dados originais não sejam alterados, mantendo a integridade das informações e permitindo possíveis reutilizações dos dados sem a necessidade de recarregá-los.
-  
-## 6. Desafios e Soluções
 
-### 6.1. Desafios Encontrados
+## Resultados e Análise de Performance
+
+Após a implementação das otimizações, o código foi testado em diferentes cenários para avaliar seu desempenho. Os resultados obtidos podem ser visualizados a seguir. **Ressalta-se que o tempo de referência para o cômputo de speedup foi o tempo da versão 1 para a execução em uma thread (pois o código sequencial seria impráticavel de se comparar)**.
+
+### Versão 1 (v1)
+
+O gráfico de tempo de execução por número de *threads* juntamente com o speedup obtido é apresentado abaixo:
+
+![Gráfico de Tempo de Execução e Speedup da Versão 1 (v1)](./images/v1Performance.png)
+
+A imagem mostra uma melhoria no tempo de execução e em speedup até, aproximadamente, 10 **threads**. A partir desse ponto, o tempo de execução satura, indicando que o *overhead* de paralelismo começa a superar os benefícios. Adicionalmente, o maior ganho de speedup é de, aproximadamente, 1.5, o que mostra que há pouco efeito em termos de ganho de desempenho com a paralelização.
+
+### Versão 2 (v2)
+
+O gráfico de tempo de execução por número de *processos* juntamente com o speedup obtido é apresentado abaixo:
+
+![Gráfico de Tempo de Execução e Speedup da Versão 2 (v2)](./images/v2Performance.png)
+
+A imagem mostra uma melhoria no tempo de execução e em speedup até, aproximadamente, 25 **processos**. A partir desse ponto, há a saturação, indicando que o *overhead* de comunicação começa a superar os benefícios. Adicionalmente, o maior ganho de speedup é de, aproximadamente, 3.5, o que mostra que há um ganho significativo de desempenho com a distribuição de carga de trabalho entre múltiplos processos.
+
+### Versão 3 (v3)
+
+O gráfico de tempo de execução por número de *processos* juntamente com o speedup obtido é apresentado abaixo (para a execução no LNCC):
+
+![Gráfico de Tempo de Execução e Speedup da Versão 3 (v3)](./images/v3Performance.png)
+
+Já para uma execução local em GPU dedicada (NVIDIA GeForce GTX 4050), o gráfico de tempo de execução por número de *processos* juntamente com o speedup obtido é apresentado abaixo:
+
+![Gráfico de Tempo de Execução e Speedup da Versão 3 (v3) em GPU](./images/v3lPerformance.png)
+
+Os gráficos mostram equivalência ou, no caso da GPU dedicada, melhoria em termos de desempenho para a versão 3. Nesse cenário, o speedup é mais significativo, chegando a aproximadamente 4.3 para 10 processos, o que indica um ganho de desempenho com a utilização de GPUs.
+  
+## 7. Desafios e Soluções
+
+### 7.1. Desafios Encontrados
 
 1. **Condições de corrida na função `combine_ids`**:
    - A utilização de buffers estáticos em uma função compartilhada entre múltiplos threads gerava resultados inconsistentes.
@@ -293,7 +361,7 @@ Com as otimizações iniciais aplicadas, a versão 0 (v0) do código apresenta m
 4. **Desbalanceamento de carga em paralelismo**:
    - O uso inicial de uma estratégia de `schedule(static)` nos loops paralelos não equilibrava a carga de trabalho adequadamente.
 
-### 6.2. Soluções Implementadas
+### 7.2. Soluções Implementadas
 
 1. **Correção de `combine_ids`**:
    - A função foi reescrita para receber um buffer externo como argumento, eliminando as condições de corrida.
@@ -307,7 +375,7 @@ Com as otimizações iniciais aplicadas, a versão 0 (v0) do código apresenta m
 4. **Uso de `schedule(dynamic)`**:
    - Alteramos a estratégia de agendamento para `schedule(dynamic)` para distribuir melhor a carga de trabalho, particularmente em cenários com iteradores que possuem custos computacionais variados.
 
-## 6. Conclusão
+## 8. Conclusão
 
 As melhorias implementadas transformaram o código original em uma versão altamente otimizada, capaz de processar grandes volumes de dados de forma eficiente. A combinação de paralelismo, otimizações de memória, correções de problemas de thread safety e uso de estruturas de dados adequadas resultou em:
 
@@ -315,7 +383,7 @@ As melhorias implementadas transformaram o código original em uma versão altam
 - **Escalabilidade**: O código agora é capaz de lidar com conjuntos de dados maiores sem comprometer o desempenho, graças às otimizações aplicadas.
 - **Confiabilidade e Consistência**: A correção de problemas não determinísticos garante resultados confiáveis em todas as execuções.
 
-## 8. Referências
+## 9. Referências
 
 - [Documentação do OpenMP](https://www.openmp.org/resources/)
 - [Documentação do MPI](https://www.mpi-forum.org/docs/)
